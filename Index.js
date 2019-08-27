@@ -11,6 +11,11 @@ const httpserver = http.createServer((req, res) => {
     const reqUrlString = req.url;
 
     if(req.method === "GET"){
+        
+        const data = {ip: ip, porta: port, response: "200"};
+        const stringed = JSON.stringify(data);
+        fs.writeFile('./data/online.json', stringed, 'utf-8', error => {if(error)console.error(error)});
+        
         const get = '[' + date.getFullYear() + '-' + 
         (date.getMonth() + 1) + '-' + date.getDate() + ' ' +  
         date.getHours() + ':'+ date.getMinutes() +  ':'+ date.getSeconds() + 
