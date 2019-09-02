@@ -4,7 +4,7 @@ import url from 'url';
 import os from 'os';
 
 let ip;
-const port = 28000;
+const port = process.argv[2] || 28000;
 
 const httpserver = http.createServer((req, res) => {
     const date = new Date();
@@ -12,7 +12,7 @@ const httpserver = http.createServer((req, res) => {
 
     if(req.method === "GET"){
         
-        const data = {ip: ip, porta: port, response: "200"};
+        const data = {ip: ip, porta: port, response: "200", desc: "Server ready!"};
         const stringed = JSON.stringify(data);
         fs.writeFile('./data/online.json', stringed, 'utf-8', error => {if(error)console.error(error)});
         
@@ -28,17 +28,21 @@ const httpserver = http.createServer((req, res) => {
         fileName = fileName.substr(1);
 
         fs.readFile(fileName, {encoding:'utf-8', flag: 'r'}, (error, data) => {
-            if(!error){
+            if(error){
+                res.setHeader('Content-type', 'text/html')
+                res.writeHead(404, {'Access-Control-Allow-Origin':'*'});
+                fs.readFile('.\\html\\index.html', {encoding:'utf-8', flag: 'r'}, (error, html) =>{
+                    res.end(html);
+                })
+                
+            }
+            else{
                 res.writeHead(200, 
                     {
                         'Access-Control-Allow-Origin':'*'
                     }
             );
                 res.end(data);
-            }
-            else{
-                res.writeHead(404, {'Access-Control-Allow-Origin':'*'});
-                res.end(get);
             }
         });
     }
