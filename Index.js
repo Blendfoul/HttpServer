@@ -27,24 +27,34 @@ const httpserver = http.createServer((req, res) => {
         let fileName = urlObject.pathname;
         fileName = fileName.substr(1);
 
-        fs.readFile(fileName, {encoding:'utf-8', flag: 'r'}, (error, data) => {
-            if(error){
-                res.setHeader('Content-type', 'text/html')
-                res.writeHead(404, {'Access-Control-Allow-Origin':'*'});
-                fs.readFile('.\\html\\index.html', {encoding:'utf-8', flag: 'r'}, (error, html) =>{
-                    res.end(html);
-                })
-                
-            }
-            else{
-                res.writeHead(200, 
-                    {
-                        'Access-Control-Allow-Origin':'*'
-                    }
-            );
-                res.end(data);
-            }
-        });
+        const pathName = url.parse(reqUrlString, true, false).pathname;
+        if('/' === pathName || '/status' === pathName || '/status' === pathName){
+            res.setHeader('Content-type', 'text/html')
+            res.writeHead(404, {'Access-Control-Allow-Origin':'*'});
+            fs.readFile('.\\html\\indexStatus.html', {encoding:'utf-8', flag: 'r'}, (error, html) =>{
+                res.end(html);
+            })
+        }else{
+            fs.readFile(fileName, {encoding:'utf-8', flag: 'r'}, (error, data) => {
+                if(error){
+                    res.setHeader('Content-type', 'text/html')
+                    res.writeHead(404, {'Access-Control-Allow-Origin':'*'});
+                    fs.readFile('.\\html\\index.html', {encoding:'utf-8', flag: 'r'}, (error, html) =>{
+                        res.end(html);
+                    })
+                    
+                }
+                else{
+                    res.writeHead(200, 
+                        {
+                            'Access-Control-Allow-Origin':'*'
+                        }
+                );
+                    res.end(data);
+                }
+            });
+        }
+       
     }
     else if(req.method === 'POST'){
         console.info('[' + date.getFullYear() +'-' + 
